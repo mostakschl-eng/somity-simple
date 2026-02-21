@@ -10,6 +10,7 @@ import {
   ArrowLeft, Plus, Trash2, Edit, User, Phone, Hash, Calendar,
   Wallet, TrendingUp, AlertTriangle, Activity, Receipt, FileDown
 } from 'lucide-react';
+import { MemberPhotoUpload } from '@/components/MemberPhotoUpload';
 import { useToast } from '@/hooks/use-toast';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useState, useMemo } from 'react';
@@ -107,9 +108,12 @@ export default function MemberProfile() {
       <Card>
         <CardContent className="p-5">
           <div className="flex items-start gap-4">
-            <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/10 text-xl font-bold text-primary shrink-0">
-              {member.name?.charAt(0)}
-            </div>
+            <MemberPhotoUpload
+              memberId={id!}
+              currentPhotoUrl={member.photo_url}
+              memberName={member.name}
+              size="sm"
+            />
             <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4 flex-1">
               <div className="flex items-center gap-2">
                 <Hash className="h-4 w-4 text-muted-foreground" />
