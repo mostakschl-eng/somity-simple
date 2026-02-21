@@ -34,8 +34,8 @@ export default function MemberProfile() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const navigate = useNavigate();
-  const [yearFilter, setYearFilter] = useState<string>('all');
-  const [monthFilter, setMonthFilter] = useState<string>('all');
+  const [yearFilter, setYearFilter] = useState<string>(new Date().getFullYear().toString());
+  const [monthFilter, setMonthFilter] = useState<string>((new Date().getMonth() + 1).toString());
   const [editOpen, setEditOpen] = useState(false);
 
   const { data: member, isLoading: memberLoading } = useQuery({
