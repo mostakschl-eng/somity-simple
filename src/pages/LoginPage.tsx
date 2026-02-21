@@ -120,7 +120,7 @@ export default function LoginPage() {
       {/* ===== MOBILE / TABLET LAYOUT ===== */}
       <div className="flex lg:hidden flex-col min-h-[100dvh] w-full">
         {/* Mobile Hero Top */}
-        <div className="relative bg-gradient-to-br from-primary via-primary/90 to-primary/70 px-6 pt-8 pb-12 text-primary-foreground overflow-hidden">
+        <div className="relative z-0 bg-gradient-to-br from-primary via-primary/90 to-primary/70 px-6 pt-8 pb-10 text-primary-foreground overflow-hidden">
           <div className="absolute -top-10 -right-10 w-32 h-32 bg-primary-foreground/5 rounded-full animate-[pulse_5s_ease-in-out_infinite]" />
           <div className="absolute bottom-0 -left-8 w-24 h-24 bg-primary-foreground/5 rounded-full animate-[pulse_7s_ease-in-out_infinite_1s]" />
 
@@ -148,8 +148,8 @@ export default function LoginPage() {
           </div>
         </div>
 
-        {/* Mobile Form Card — overlapping the hero */}
-        <div className="flex-1 bg-background px-4 pb-6 -mt-8">
+        {/* Mobile Form Card */}
+        <div className="relative z-10 flex-1 bg-background px-4 pb-6 -mt-6">
           <Card className="shadow-xl border-border overflow-hidden animate-fade-in">
             <div className="h-1 bg-gradient-to-r from-primary via-primary/70 to-primary/40" />
             <CardContent className="p-5 space-y-5">
