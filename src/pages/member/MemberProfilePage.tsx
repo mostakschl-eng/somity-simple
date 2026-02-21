@@ -8,10 +8,10 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { 
   Download, User, Phone, Hash, Calendar, Wallet, 
-  TrendingUp, AlertTriangle, Receipt, Activity, 
-  ArrowDownRight, PieChart as PieChartIcon
+  TrendingUp, AlertTriangle, Receipt, Activity, FileDown
 } from 'lucide-react';
 import { useState, useMemo } from 'react';
+import { generateReceiptPDF } from '@/lib/generateReceipt';
 import {
   ChartContainer,
   ChartTooltip,
@@ -66,40 +66,8 @@ export default function MemberProfilePage() {
   }, [records]);
 
   const handleDownloadReceipt = (record: any) => {
-    const receiptContent = `
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-        সমিতি ম্যানেজার
-         মাসিক রিসিট
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-রিসিট নং: ${record.receipt_no}
-তারিখ: ${record.date || '-'}
-
-সদস্যের নাম: ${profile?.name}
-সদস্য নং: ${profile?.member_no}
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-মাস: ${record.month_name} ${record.year}
-
-মাসিক জমা:      ৳${record.monthly_deposit}
-বিবিধ খরচ:      ৳${record.misc_expense}
-বিলম্ব জরিমানা:  ৳${record.late_fine}
-এককালীন:        ৳${record.one_time}
-─────────────────────────────
-মোট টাকা:       ৳${record.total_amount}
-
-বকেয়া:          ৳${record.due}
-মোট জমা:        ৳${record.total_deposit}
-বর্তমান ব্যালেন্স: ৳${record.current_balance}
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-    `;
-    const blob = new Blob([receiptContent], { type: 'text/plain;charset=utf-8' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `receipt-${record.receipt_no}.txt`;
-    a.click();
-    URL.revokeObjectURL(url);
+    if (!profile) return;
+    generateReceiptPDF(record, profile);
   };
 
   return (
@@ -283,8 +251,8 @@ export default function MemberProfilePage() {
                       <td className="px-3 py-2.5 text-right text-accent">{formatCurrency(r.due)}</td>
                       <td className="px-3 py-2.5 text-right font-semibold">{formatCurrency(r.current_balance)}</td>
                       <td className="px-3 py-2.5 text-right">
-                        <Button variant="ghost" size="sm" onClick={() => handleDownloadReceipt(r)}>
-                          <Download className="h-3.5 w-3.5" />
+                        <Button variant="ghost" size="sm" onClick={() => handleDownloadReceipt(r)} title="PDF ডাউনলোড">
+                          <FileDown className="h-3.5 w-3.5" />
                         </Button>
                       </td>
                     </tr>
