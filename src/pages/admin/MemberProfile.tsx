@@ -14,6 +14,7 @@ import { MemberPhotoUpload } from '@/components/MemberPhotoUpload';
 import { useToast } from '@/hooks/use-toast';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useState, useMemo } from 'react';
+import { EditMemberDialog } from '@/components/EditMemberDialog';
 import {
   ChartContainer,
   ChartTooltip,
@@ -33,6 +34,7 @@ export default function MemberProfile() {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   const [yearFilter, setYearFilter] = useState<string>('all');
+  const [editOpen, setEditOpen] = useState(false);
 
   const { data: member, isLoading: memberLoading } = useQuery({
     queryKey: ['member', id],
@@ -99,9 +101,15 @@ export default function MemberProfile() {
           <h1 className="text-2xl font-bold">{member.name}</h1>
           <p className="text-muted-foreground">সদস্যের বিস্তারিত তথ্য</p>
         </div>
-        <Button variant={member.is_active ? 'secondary' : 'default'} onClick={() => toggleActive.mutate()}>
-          {member.is_active ? 'নিষ্ক্রিয় করুন' : 'সক্রিয় করুন'}
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button variant="outline" size="sm" className="gap-1.5" onClick={() => setEditOpen(true)}>
+            <Edit className="h-4 w-4" />
+            সম্পাদনা
+          </Button>
+          <Button variant={member.is_active ? 'secondary' : 'default'} size="sm" onClick={() => toggleActive.mutate()}>
+            {member.is_active ? 'নিষ্ক্রিয় করুন' : 'সক্রিয় করুন'}
+          </Button>
+        </div>
       </div>
 
       {/* Profile Info */}
@@ -310,6 +318,8 @@ export default function MemberProfile() {
           )}
         </CardContent>
       </Card>
+
+      <EditMemberDialog member={member} open={editOpen} onOpenChange={setEditOpen} />
     </div>
   );
 }
