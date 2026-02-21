@@ -15,6 +15,7 @@ import { useToast } from '@/hooks/use-toast';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useState, useMemo } from 'react';
 import { EditMemberDialog } from '@/components/EditMemberDialog';
+import { BENGALI_MONTHS } from '@/lib/constants';
 import {
   ChartContainer,
   ChartTooltip,
@@ -34,6 +35,7 @@ export default function MemberProfile() {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   const [yearFilter, setYearFilter] = useState<string>('all');
+  const [monthFilter, setMonthFilter] = useState<string>('all');
   const [editOpen, setEditOpen] = useState(false);
 
   const { data: member, isLoading: memberLoading } = useQuery({
@@ -43,10 +45,18 @@ export default function MemberProfile() {
   });
 
   const { data: records, isLoading: recordsLoading } = useQuery({
-    queryKey: ['records', id, yearFilter],
-    queryFn: () => getMemberRecords(id!, yearFilter !== 'all' ? parseInt(yearFilter) : undefined),
+    queryKey: ['records', id],
+    queryFn: () => getMemberRecords(id!),
     enabled: !!id,
   });
+
+  const filteredRecords = useMemo(() => {
+    if (!records) return [];
+    let filtered = records;
+    if (yearFilter !== 'all') filtered = filtered.filter(r => r.year === parseInt(yearFilter));
+    if (monthFilter !== 'all') filtered = filtered.filter(r => r.month_number === parseInt(monthFilter));
+    return filtered;
+  }, [records, yearFilter, monthFilter]);
 
   const toggleActive = useMutation({
     mutationFn: () => updateProfile(id!, { is_active: !member?.is_active }),
@@ -69,24 +79,24 @@ export default function MemberProfile() {
 
   // Financial summary
   const summary = useMemo(() => {
-    if (!records?.length) return { deposit: 0, expense: 0, due: 0, balance: 0 };
-    const last = records[records.length - 1];
+    if (!filteredRecords?.length) return { deposit: 0, expense: 0, due: 0, balance: 0 };
+    const last = filteredRecords[filteredRecords.length - 1];
     return {
       deposit: Number(last.total_deposit) || 0,
       expense: Number(last.total_expense) || 0,
-      due: records.reduce((s, r) => s + (Number(r.due) || 0), 0),
+      due: filteredRecords.reduce((s, r) => s + (Number(r.due) || 0), 0),
       balance: Number(last.current_balance) || 0,
     };
-  }, [records]);
+  }, [filteredRecords]);
 
   const chartData = useMemo(() => {
-    if (!records) return [];
-    return records.map(r => ({
+    if (!filteredRecords) return [];
+    return filteredRecords.map(r => ({
       name: `${r.month_name?.substring(0, 3)}`,
       deposit: Number(r.monthly_deposit) || 0,
       due: Number(r.due) || 0,
     }));
-  }, [records]);
+  }, [filteredRecords]);
 
   if (memberLoading) return <div className="p-6 text-muted-foreground">লোড হচ্ছে...</div>;
   if (!member) return <div className="p-6 text-muted-foreground">সদস্য পাওয়া যায়নি</div>;
@@ -200,7 +210,7 @@ export default function MemberProfile() {
             </div>
             <div className="min-w-0">
               <p className="text-[10px] sm:text-xs text-muted-foreground">মোট রেকর্ড</p>
-              <p className="text-sm sm:text-lg font-bold">{records?.length ?? 0}</p>
+              <p className="text-sm sm:text-lg font-bold">{filteredRecords?.length ?? 0}</p>
             </div>
           </CardContent>
         </Card>
@@ -232,35 +242,56 @@ export default function MemberProfile() {
 
       {/* Records */}
       <Card>
-        <CardHeader className="flex flex-row items-center justify-between">
-          <CardTitle className="text-base flex items-center gap-2">
-            <Receipt className="h-5 w-5 text-muted-foreground" />
-            মাসিক রেকর্ড
-          </CardTitle>
-          <div className="flex items-center gap-3">
-            <Select value={yearFilter} onValueChange={setYearFilter}>
-              <SelectTrigger className="w-32">
-                <SelectValue placeholder="বছর" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">সব বছর</SelectItem>
-                {years.map(y => (
-                  <SelectItem key={y} value={y.toString()}>{y}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            <Link to={`/admin/members/${id}/update`}>
-              <Button size="sm" className="gap-1.5">
-                <Plus className="h-4 w-4" />
-                নতুন মাস
-              </Button>
-            </Link>
+        <CardHeader className="px-3 sm:px-6 pb-3">
+          <div className="flex flex-col gap-3">
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-sm sm:text-base flex items-center gap-2">
+                <Receipt className="h-4 w-4 sm:h-5 sm:w-5 text-muted-foreground" />
+                মাসিক রেকর্ড
+              </CardTitle>
+              <Link to={`/admin/members/${id}/update`}>
+                <Button size="sm" className="gap-1.5 h-8 text-xs sm:text-sm">
+                  <Plus className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                  <span className="hidden sm:inline">নতুন মাস</span>
+                  <span className="sm:hidden">যোগ</span>
+                </Button>
+              </Link>
+            </div>
+            <div className="flex items-center gap-2 flex-wrap">
+              <Select value={yearFilter} onValueChange={setYearFilter}>
+                <SelectTrigger className="w-24 sm:w-28 h-8 text-xs sm:text-sm">
+                  <SelectValue placeholder="বছর" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">সব বছর</SelectItem>
+                  {years.map(y => (
+                    <SelectItem key={y} value={y.toString()}>{y}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <Select value={monthFilter} onValueChange={setMonthFilter}>
+                <SelectTrigger className="w-28 sm:w-32 h-8 text-xs sm:text-sm">
+                  <SelectValue placeholder="মাস" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">সব মাস</SelectItem>
+                  {BENGALI_MONTHS.map(m => (
+                    <SelectItem key={m.number} value={m.number.toString()}>{m.name}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              {(yearFilter !== 'all' || monthFilter !== 'all') && (
+                <Button variant="ghost" size="sm" className="h-8 text-xs px-2" onClick={() => { setYearFilter('all'); setMonthFilter('all'); }}>
+                  রিসেট
+                </Button>
+              )}
+            </div>
           </div>
         </CardHeader>
         <CardContent className="p-0">
           {recordsLoading ? (
             <div className="p-6 text-center text-muted-foreground">লোড হচ্ছে...</div>
-          ) : !records?.length ? (
+          ) : !filteredRecords?.length ? (
             <div className="p-8 text-center">
               <Receipt className="h-12 w-12 mx-auto text-muted-foreground/30 mb-3" />
               <p className="text-muted-foreground">কোনো রেকর্ড নেই</p>
@@ -283,7 +314,7 @@ export default function MemberProfile() {
                   </tr>
                 </thead>
                 <tbody>
-                  {records.map((r) => (
+                  {filteredRecords.map((r) => (
                     <tr key={r.id} className="border-b border-border last:border-0 hover:bg-muted/30">
                       <td className="px-3 py-2.5 font-medium">{r.month_name} {r.year}</td>
                       <td className="px-3 py-2.5 text-right">{formatCurrency(r.monthly_deposit)}</td>
