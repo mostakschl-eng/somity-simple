@@ -28,8 +28,8 @@ const chartConfig = {
 
 export default function MemberProfilePage() {
   const { user } = useAuth();
-  const [yearFilter, setYearFilter] = useState<string>('all');
-  const [monthFilter, setMonthFilter] = useState<string>('all');
+  const [yearFilter, setYearFilter] = useState<string>(new Date().getFullYear().toString());
+  const [monthFilter, setMonthFilter] = useState<string>((new Date().getMonth() + 1).toString());
 
   const { data: profile } = useQuery({
     queryKey: ['my-profile', user?.id],
