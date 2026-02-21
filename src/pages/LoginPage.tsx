@@ -18,34 +18,31 @@ export default function LoginPage() {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-
     const { error } = await supabase.auth.signInWithPassword({ email, password });
-
     if (error) {
       toast({ title: 'লগইন ব্যর্থ', description: error.message, variant: 'destructive' });
     } else {
-      // Role check will redirect in App.tsx
       navigate('/');
     }
     setLoading(false);
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background p-4">
-      <Card className="w-full max-w-md border-border shadow-xl">
-        <CardHeader className="space-y-3 text-center pb-2">
-          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-xl bg-primary">
-            <span className="text-2xl font-bold text-primary-foreground">স</span>
+    <div className="flex min-h-[100dvh] items-center justify-center bg-background p-4">
+      <Card className="w-full max-w-sm sm:max-w-md border-border shadow-xl">
+        <CardHeader className="space-y-2.5 sm:space-y-3 text-center pb-2">
+          <div className="mx-auto flex h-12 w-12 sm:h-14 sm:w-14 items-center justify-center rounded-xl bg-primary">
+            <span className="text-xl sm:text-2xl font-bold text-primary-foreground">স</span>
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-foreground">সমিতি ম্যানেজার</h1>
-            <p className="text-sm text-muted-foreground">আপনার অ্যাকাউন্টে প্রবেশ করুন</p>
+            <h1 className="text-xl sm:text-2xl font-bold text-foreground">সমিতি ম্যানেজার</h1>
+            <p className="text-xs sm:text-sm text-muted-foreground">আপনার অ্যাকাউন্টে প্রবেশ করুন</p>
           </div>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleLogin} className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="email">ইমেইল</Label>
+          <form onSubmit={handleLogin} className="space-y-3 sm:space-y-4">
+            <div className="space-y-1.5 sm:space-y-2">
+              <Label htmlFor="email" className="text-xs sm:text-sm">ইমেইল</Label>
               <Input
                 id="email"
                 type="email"
@@ -53,10 +50,11 @@ export default function LoginPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
+                className="h-9 sm:h-10 text-sm"
               />
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="password">পাসওয়ার্ড</Label>
+            <div className="space-y-1.5 sm:space-y-2">
+              <Label htmlFor="password" className="text-xs sm:text-sm">পাসওয়ার্ড</Label>
               <Input
                 id="password"
                 type="password"
@@ -64,9 +62,10 @@ export default function LoginPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
+                className="h-9 sm:h-10 text-sm"
               />
             </div>
-            <Button type="submit" className="w-full" disabled={loading}>
+            <Button type="submit" className="w-full h-9 sm:h-10 text-sm" disabled={loading}>
               <LogIn className="mr-2 h-4 w-4" />
               {loading ? 'প্রবেশ করা হচ্ছে...' : 'প্রবেশ করুন'}
             </Button>
