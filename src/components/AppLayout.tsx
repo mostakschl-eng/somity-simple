@@ -5,6 +5,7 @@ import {
   LayoutDashboard, Users, UserPlus, LogOut, User, 
   ChevronRight, Menu, X, Shield
 } from 'lucide-react';
+import logoImg from '@/assets/logo.png';
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -46,8 +47,8 @@ export function AppLayout({ children }: { children: ReactNode }) {
         <div className="flex h-full flex-col">
           {/* Logo */}
           <div className="flex items-center gap-2.5 sm:gap-3 border-b border-sidebar-border px-4 sm:px-5 py-4 sm:py-5">
-            <div className="flex h-9 w-9 sm:h-10 sm:w-10 items-center justify-center rounded-xl bg-sidebar-primary">
-              <span className="text-base sm:text-lg font-bold text-sidebar-primary-foreground">স</span>
+            <div className="flex h-9 w-9 sm:h-10 sm:w-10 items-center justify-center rounded-xl bg-sidebar-primary overflow-hidden">
+              <img src={logoImg} alt="সমিতি ম্যানেজার" className="h-7 w-7 sm:h-8 sm:w-8 object-contain" />
             </div>
             <div className="min-w-0">
               <h1 className="text-sm sm:text-base font-bold text-sidebar-foreground truncate">সমিতি ম্যানেজার</h1>

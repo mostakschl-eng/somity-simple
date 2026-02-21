@@ -7,6 +7,7 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
 import { LogIn, Shield, Users, Wallet, TrendingUp } from 'lucide-react';
+import logoImg from '@/assets/logo.png';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -39,8 +40,8 @@ export default function LoginPage() {
 
         <div className="relative z-10 max-w-md text-primary-foreground space-y-8 animate-fade-in">
           <div className="flex items-center gap-4">
-            <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-primary-foreground/15 backdrop-blur-sm border border-primary-foreground/20 shadow-lg">
-              <span className="text-3xl font-bold">স</span>
+            <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-primary-foreground/15 backdrop-blur-sm border border-primary-foreground/20 shadow-lg overflow-hidden">
+              <img src={logoImg} alt="সমিতি ম্যানেজার" className="h-12 w-12 object-contain" />
             </div>
             <div>
               <h1 className="text-3xl font-bold tracking-tight">সমিতি ম্যানেজার</h1>
@@ -125,8 +126,8 @@ export default function LoginPage() {
           <div className="absolute bottom-0 -left-8 w-24 h-24 bg-primary-foreground/5 rounded-full animate-[pulse_7s_ease-in-out_infinite_1s]" />
 
           <div className="relative z-10 text-center space-y-2 animate-fade-in">
-            <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-primary-foreground/15 backdrop-blur-sm border border-primary-foreground/20 shadow-lg">
-              <span className="text-xl font-bold">স</span>
+            <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-primary-foreground/15 backdrop-blur-sm border border-primary-foreground/20 shadow-lg overflow-hidden">
+              <img src={logoImg} alt="সমিতি ম্যানেজার" className="h-9 w-9 object-contain" />
             </div>
             <div>
               <h1 className="text-lg font-bold tracking-tight">সমিতি ম্যানেজার</h1>
