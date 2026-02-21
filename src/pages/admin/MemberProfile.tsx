@@ -2,12 +2,13 @@ import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { getMember, getMemberRecords, updateProfile, deleteRecord } from '@/lib/api';
 import { formatCurrency } from '@/lib/constants';
+import { generateReceiptPDF } from '@/lib/generateReceipt';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { 
   ArrowLeft, Plus, Trash2, Edit, User, Phone, Hash, Calendar,
-  Wallet, TrendingUp, AlertTriangle, Activity, Receipt
+  Wallet, TrendingUp, AlertTriangle, Activity, Receipt, FileDown
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -283,6 +284,9 @@ export default function MemberProfile() {
                       <td className="px-3 py-2.5 text-right text-xs text-muted-foreground hidden sm:table-cell">{r.receipt_no}</td>
                       <td className="px-3 py-2.5 text-right">
                         <div className="flex items-center justify-end gap-0.5">
+                          <Button variant="ghost" size="sm" onClick={() => member && generateReceiptPDF(r, member)} title="PDF ডাউনলোড">
+                            <FileDown className="h-3.5 w-3.5" />
+                          </Button>
                           <Link to={`/admin/members/${id}/update?record=${r.id}`}>
                             <Button variant="ghost" size="sm"><Edit className="h-3.5 w-3.5" /></Button>
                           </Link>
