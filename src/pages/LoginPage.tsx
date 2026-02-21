@@ -120,28 +120,26 @@ export default function LoginPage() {
       {/* ===== MOBILE / TABLET LAYOUT ===== */}
       <div className="flex lg:hidden flex-col min-h-[100dvh] w-full">
         {/* Mobile Hero Top */}
-        <div className="relative bg-gradient-to-br from-primary via-primary/90 to-primary/70 px-6 pt-12 pb-16 text-primary-foreground overflow-hidden">
-          {/* Animated circles */}
-          <div className="absolute -top-10 -right-10 w-40 h-40 bg-primary-foreground/5 rounded-full animate-[pulse_5s_ease-in-out_infinite]" />
-          <div className="absolute bottom-0 -left-8 w-32 h-32 bg-primary-foreground/5 rounded-full animate-[pulse_7s_ease-in-out_infinite_1s]" />
+        <div className="relative bg-gradient-to-br from-primary via-primary/90 to-primary/70 px-6 pt-8 pb-12 text-primary-foreground overflow-hidden">
+          <div className="absolute -top-10 -right-10 w-32 h-32 bg-primary-foreground/5 rounded-full animate-[pulse_5s_ease-in-out_infinite]" />
+          <div className="absolute bottom-0 -left-8 w-24 h-24 bg-primary-foreground/5 rounded-full animate-[pulse_7s_ease-in-out_infinite_1s]" />
 
-          <div className="relative z-10 text-center space-y-3 animate-fade-in">
-            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-primary-foreground/15 backdrop-blur-sm border border-primary-foreground/20 shadow-lg">
-              <span className="text-2xl font-bold">স</span>
+          <div className="relative z-10 text-center space-y-2 animate-fade-in">
+            <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-primary-foreground/15 backdrop-blur-sm border border-primary-foreground/20 shadow-lg">
+              <span className="text-xl font-bold">স</span>
             </div>
             <div>
-              <h1 className="text-xl font-bold tracking-tight">সমিতি ম্যানেজার</h1>
-              <p className="text-primary-foreground/60 text-xs mt-0.5">সমবায় ব্যবস্থাপনা সিস্টেম</p>
+              <h1 className="text-lg font-bold tracking-tight">সমিতি ম্যানেজার</h1>
+              <p className="text-primary-foreground/60 text-[11px] mt-0.5">সমবায় ব্যবস্থাপনা সিস্টেম</p>
             </div>
-            {/* Mini feature pills */}
-            <div className="flex flex-wrap justify-center gap-1.5 pt-2">
+            <div className="flex flex-wrap justify-center gap-1.5 pt-1">
               {[
                 { icon: Users, label: 'সদস্য' },
                 { icon: Wallet, label: 'হিসাব' },
                 { icon: TrendingUp, label: 'রিপোর্ট' },
                 { icon: Shield, label: 'নিরাপদ' },
               ].map((item) => (
-                <span key={item.label} className="flex items-center gap-1 rounded-full bg-primary-foreground/10 px-2.5 py-1 text-[10px] font-medium backdrop-blur-sm">
+                <span key={item.label} className="flex items-center gap-1 rounded-full bg-primary-foreground/10 px-2 py-0.5 text-[10px] font-medium backdrop-blur-sm">
                   <item.icon className="h-2.5 w-2.5" />
                   {item.label}
                 </span>
