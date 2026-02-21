@@ -108,16 +108,16 @@ export default function UpdateRecord() {
       <Card className="max-w-2xl">
         <CardContent className="p-3 sm:p-6 pt-3 sm:pt-6">
           <form onSubmit={(e) => { e.preventDefault(); saveMutation.mutate(); }} className="space-y-4 sm:space-y-5">
-            {/* Year & Month */}
-            <div className="grid grid-cols-3 gap-2 sm:gap-4">
+            {/* Year & Month & Date */}
+            <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 sm:gap-4">
               <div className="space-y-1 sm:space-y-2">
                 <Label className="text-xs sm:text-sm">বছর</Label>
-                <Input type="number" value={form.year} onChange={e => updateField('year', parseInt(e.target.value))} className="h-9 text-sm" />
+                <Input type="number" value={form.year} onChange={e => updateField('year', parseInt(e.target.value))} className="h-10 sm:h-9 text-sm" />
               </div>
               <div className="space-y-1 sm:space-y-2">
                 <Label className="text-xs sm:text-sm">মাস</Label>
                 <Select value={form.month_number.toString()} onValueChange={v => updateField('month_number', parseInt(v))}>
-                  <SelectTrigger className="h-9 text-xs sm:text-sm"><SelectValue /></SelectTrigger>
+                  <SelectTrigger className="h-10 sm:h-9 text-xs sm:text-sm"><SelectValue /></SelectTrigger>
                   <SelectContent>
                     {BENGALI_MONTHS.map(m => (
                       <SelectItem key={m.number} value={m.number.toString()}>{m.name}</SelectItem>
@@ -125,9 +125,9 @@ export default function UpdateRecord() {
                   </SelectContent>
                 </Select>
               </div>
-              <div className="space-y-1 sm:space-y-2">
+              <div className="space-y-1 sm:space-y-2 col-span-2 sm:col-span-1">
                 <Label className="text-xs sm:text-sm">তারিখ</Label>
-                <Input type="date" value={form.date} onChange={e => updateField('date', e.target.value)} className="h-9 text-sm" />
+                <Input type="date" value={form.date} onChange={e => updateField('date', e.target.value)} className="h-10 sm:h-9 text-sm" />
               </div>
             </div>
 
@@ -135,19 +135,19 @@ export default function UpdateRecord() {
             <div className="grid grid-cols-2 gap-2 sm:gap-4">
               <div className="space-y-1 sm:space-y-2">
                 <Label className="text-xs sm:text-sm">মাসিক জমা (৳)</Label>
-                <Input type="number" step="0.01" value={form.monthly_deposit} onChange={e => updateField('monthly_deposit', parseFloat(e.target.value) || 0)} className="h-9 text-sm" />
+                <Input type="number" step="0.01" value={form.monthly_deposit} onChange={e => updateField('monthly_deposit', parseFloat(e.target.value) || 0)} className="h-10 sm:h-9 text-sm" />
               </div>
               <div className="space-y-1 sm:space-y-2">
                 <Label className="text-xs sm:text-sm">বিবিধ খরচ (৳)</Label>
-                <Input type="number" step="0.01" value={form.misc_expense} onChange={e => updateField('misc_expense', parseFloat(e.target.value) || 0)} className="h-9 text-sm" />
+                <Input type="number" step="0.01" value={form.misc_expense} onChange={e => updateField('misc_expense', parseFloat(e.target.value) || 0)} className="h-10 sm:h-9 text-sm" />
               </div>
               <div className="space-y-1 sm:space-y-2">
                 <Label className="text-xs sm:text-sm">জরিমানা (৳)</Label>
-                <Input type="number" step="0.01" value={form.late_fine} onChange={e => updateField('late_fine', parseFloat(e.target.value) || 0)} className="h-9 text-sm" />
+                <Input type="number" step="0.01" value={form.late_fine} onChange={e => updateField('late_fine', parseFloat(e.target.value) || 0)} className="h-10 sm:h-9 text-sm" />
               </div>
               <div className="space-y-1 sm:space-y-2">
                 <Label className="text-xs sm:text-sm">এককালীন (৳)</Label>
-                <Input type="number" step="0.01" value={form.one_time} onChange={e => updateField('one_time', parseFloat(e.target.value) || 0)} className="h-9 text-sm" />
+                <Input type="number" step="0.01" value={form.one_time} onChange={e => updateField('one_time', parseFloat(e.target.value) || 0)} className="h-10 sm:h-9 text-sm" />
               </div>
             </div>
 
@@ -161,23 +161,23 @@ export default function UpdateRecord() {
             <div className="grid grid-cols-2 gap-2 sm:gap-4">
               <div className="space-y-1 sm:space-y-2">
                 <Label className="text-xs sm:text-sm">বকেয়া (৳)</Label>
-                <Input type="number" step="0.01" value={form.due} onChange={e => updateField('due', parseFloat(e.target.value) || 0)} className="h-9 text-sm" />
+                <Input type="number" step="0.01" value={form.due} onChange={e => updateField('due', parseFloat(e.target.value) || 0)} className="h-10 sm:h-9 text-sm" />
               </div>
               <div className="space-y-1 sm:space-y-2">
                 <Label className="text-xs sm:text-sm">মোট জমা (৳)</Label>
-                <Input type="number" step="0.01" value={form.total_deposit} onChange={e => updateField('total_deposit', parseFloat(e.target.value) || 0)} className="h-9 text-sm" />
+                <Input type="number" step="0.01" value={form.total_deposit} onChange={e => updateField('total_deposit', parseFloat(e.target.value) || 0)} className="h-10 sm:h-9 text-sm" />
               </div>
               <div className="space-y-1 sm:space-y-2">
                 <Label className="text-xs sm:text-sm">মোট ব্যয় (৳)</Label>
-                <Input type="number" step="0.01" value={form.total_expense} onChange={e => updateField('total_expense', parseFloat(e.target.value) || 0)} className="h-9 text-sm" />
+                <Input type="number" step="0.01" value={form.total_expense} onChange={e => updateField('total_expense', parseFloat(e.target.value) || 0)} className="h-10 sm:h-9 text-sm" />
               </div>
               <div className="space-y-1 sm:space-y-2">
                 <Label className="text-xs sm:text-sm">ব্যালেন্স (৳)</Label>
-                <Input type="number" step="0.01" value={form.current_balance} onChange={e => updateField('current_balance', parseFloat(e.target.value) || 0)} className="h-9 text-sm" />
+                <Input type="number" step="0.01" value={form.current_balance} onChange={e => updateField('current_balance', parseFloat(e.target.value) || 0)} className="h-10 sm:h-9 text-sm" />
               </div>
             </div>
 
-            <Button type="submit" className="w-full h-9 sm:h-10 text-sm" disabled={saveMutation.isPending}>
+            <Button type="submit" className="w-full h-11 sm:h-10 text-sm font-semibold" disabled={saveMutation.isPending}>
               <Save className="mr-2 h-4 w-4" />
               {saveMutation.isPending ? 'সংরক্ষণ হচ্ছে...' : recordId ? 'আপডেট করুন' : 'রেকর্ড যোগ করুন'}
             </Button>
