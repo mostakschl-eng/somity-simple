@@ -2,13 +2,28 @@ import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { getMember, getMemberRecords, updateProfile, deleteRecord } from '@/lib/api';
 import { formatCurrency } from '@/lib/constants';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { ArrowLeft, Plus, Trash2, Edit, User, Phone, Hash, Calendar } from 'lucide-react';
+import { 
+  ArrowLeft, Plus, Trash2, Edit, User, Phone, Hash, Calendar,
+  Wallet, TrendingUp, AlertTriangle, Activity, Receipt
+} from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
+import {
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+  type ChartConfig,
+} from '@/components/ui/chart';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid } from 'recharts';
+
+const chartConfig = {
+  deposit: { label: 'জমা', color: 'hsl(168 60% 32%)' },
+  due: { label: 'বকেয়া', color: 'hsl(0 72% 51%)' },
+} satisfies ChartConfig;
 
 export default function MemberProfile() {
   const { id } = useParams<{ id: string }>();
@@ -48,6 +63,27 @@ export default function MemberProfile() {
 
   const years = [...new Set(records?.map(r => r.year))].sort((a, b) => b - a);
 
+  // Financial summary
+  const summary = useMemo(() => {
+    if (!records?.length) return { deposit: 0, expense: 0, due: 0, balance: 0 };
+    const last = records[records.length - 1];
+    return {
+      deposit: Number(last.total_deposit) || 0,
+      expense: Number(last.total_expense) || 0,
+      due: records.reduce((s, r) => s + (Number(r.due) || 0), 0),
+      balance: Number(last.current_balance) || 0,
+    };
+  }, [records]);
+
+  const chartData = useMemo(() => {
+    if (!records) return [];
+    return records.map(r => ({
+      name: `${r.month_name?.substring(0, 3)}`,
+      deposit: Number(r.monthly_deposit) || 0,
+      due: Number(r.due) || 0,
+    }));
+  }, [records]);
+
   if (memberLoading) return <div className="p-6 text-muted-foreground">লোড হচ্ছে...</div>;
   if (!member) return <div className="p-6 text-muted-foreground">সদস্য পাওয়া যায়নি</div>;
 
@@ -68,44 +104,126 @@ export default function MemberProfile() {
 
       {/* Profile Info */}
       <Card>
-        <CardContent className="grid gap-4 p-5 sm:grid-cols-2 lg:grid-cols-4">
-          <div className="flex items-center gap-3">
-            <Hash className="h-4 w-4 text-muted-foreground" />
-            <div>
-              <p className="text-xs text-muted-foreground">সদস্য নং</p>
-              <p className="font-medium">{member.member_no || '-'}</p>
+        <CardContent className="p-5">
+          <div className="flex items-start gap-4">
+            <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/10 text-xl font-bold text-primary shrink-0">
+              {member.name?.charAt(0)}
             </div>
-          </div>
-          <div className="flex items-center gap-3">
-            <Phone className="h-4 w-4 text-muted-foreground" />
-            <div>
-              <p className="text-xs text-muted-foreground">মোবাইল</p>
-              <p className="font-medium">{member.mobile || '-'}</p>
-            </div>
-          </div>
-          <div className="flex items-center gap-3">
-            <Calendar className="h-4 w-4 text-muted-foreground" />
-            <div>
-              <p className="text-xs text-muted-foreground">অর্থ বছর</p>
-              <p className="font-medium">{member.financial_year || '-'}</p>
-            </div>
-          </div>
-          <div className="flex items-center gap-3">
-            <User className="h-4 w-4 text-muted-foreground" />
-            <div>
-              <p className="text-xs text-muted-foreground">স্ট্যাটাস</p>
-              <Badge variant={member.is_active ? 'default' : 'secondary'}>
-                {member.is_active ? 'সক্রিয়' : 'নিষ্ক্রিয়'}
-              </Badge>
+            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4 flex-1">
+              <div className="flex items-center gap-2">
+                <Hash className="h-4 w-4 text-muted-foreground" />
+                <div>
+                  <p className="text-xs text-muted-foreground">সদস্য নং</p>
+                  <p className="font-medium">{member.member_no || '-'}</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
+                <Phone className="h-4 w-4 text-muted-foreground" />
+                <div>
+                  <p className="text-xs text-muted-foreground">মোবাইল</p>
+                  <p className="font-medium">{member.mobile || '-'}</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
+                <Calendar className="h-4 w-4 text-muted-foreground" />
+                <div>
+                  <p className="text-xs text-muted-foreground">অর্থ বছর</p>
+                  <p className="font-medium">{member.financial_year || '-'}</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
+                <User className="h-4 w-4 text-muted-foreground" />
+                <div>
+                  <p className="text-xs text-muted-foreground">স্ট্যাটাস</p>
+                  <Badge variant={member.is_active ? 'default' : 'secondary'}>
+                    {member.is_active ? 'সক্রিয়' : 'নিষ্ক্রিয়'}
+                  </Badge>
+                </div>
+              </div>
             </div>
           </div>
         </CardContent>
       </Card>
 
+      {/* Financial Summary */}
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <Card>
+          <CardContent className="p-4 flex items-center gap-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-success/10">
+              <TrendingUp className="h-5 w-5 text-success" />
+            </div>
+            <div>
+              <p className="text-xs text-muted-foreground">মোট জমা</p>
+              <p className="text-lg font-bold">{formatCurrency(summary.deposit)}</p>
+            </div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="p-4 flex items-center gap-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-info/10">
+              <Wallet className="h-5 w-5 text-info" />
+            </div>
+            <div>
+              <p className="text-xs text-muted-foreground">ব্যালেন্স</p>
+              <p className="text-lg font-bold">{formatCurrency(summary.balance)}</p>
+            </div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="p-4 flex items-center gap-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-accent/10">
+              <AlertTriangle className="h-5 w-5 text-accent" />
+            </div>
+            <div>
+              <p className="text-xs text-muted-foreground">মোট বকেয়া</p>
+              <p className="text-lg font-bold">{formatCurrency(summary.due)}</p>
+            </div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="p-4 flex items-center gap-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10">
+              <Receipt className="h-5 w-5 text-primary" />
+            </div>
+            <div>
+              <p className="text-xs text-muted-foreground">মোট রেকর্ড</p>
+              <p className="text-lg font-bold">{records?.length ?? 0}</p>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Chart */}
+      {chartData.length > 0 && (
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-base flex items-center gap-2">
+              <Activity className="h-5 w-5 text-muted-foreground" />
+              মাসিক জমা ও বকেয়া
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <ChartContainer config={chartConfig} className="h-[200px] w-full">
+              <BarChart data={chartData}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="name" tick={{ fontSize: 11 }} />
+                <YAxis tick={{ fontSize: 11 }} />
+                <ChartTooltip content={<ChartTooltipContent />} />
+                <Bar dataKey="deposit" fill="var(--color-deposit)" radius={[3, 3, 0, 0]} />
+                <Bar dataKey="due" fill="var(--color-due)" radius={[3, 3, 0, 0]} />
+              </BarChart>
+            </ChartContainer>
+          </CardContent>
+        </Card>
+      )}
+
       {/* Records */}
       <Card>
         <CardHeader className="flex flex-row items-center justify-between">
-          <CardTitle className="text-lg">মাসিক রেকর্ড</CardTitle>
+          <CardTitle className="text-base flex items-center gap-2">
+            <Receipt className="h-5 w-5 text-muted-foreground" />
+            মাসিক রেকর্ড
+          </CardTitle>
           <div className="flex items-center gap-3">
             <Select value={yearFilter} onValueChange={setYearFilter}>
               <SelectTrigger className="w-32">
@@ -119,8 +237,8 @@ export default function MemberProfile() {
               </SelectContent>
             </Select>
             <Link to={`/admin/members/${id}/update`}>
-              <Button size="sm">
-                <Plus className="mr-1 h-4 w-4" />
+              <Button size="sm" className="gap-1.5">
+                <Plus className="h-4 w-4" />
                 নতুন মাস
               </Button>
             </Link>
@@ -130,7 +248,10 @@ export default function MemberProfile() {
           {recordsLoading ? (
             <div className="p-6 text-center text-muted-foreground">লোড হচ্ছে...</div>
           ) : !records?.length ? (
-            <div className="p-6 text-center text-muted-foreground">কোনো রেকর্ড নেই</div>
+            <div className="p-8 text-center">
+              <Receipt className="h-12 w-12 mx-auto text-muted-foreground/30 mb-3" />
+              <p className="text-muted-foreground">কোনো রেকর্ড নেই</p>
+            </div>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
@@ -138,13 +259,13 @@ export default function MemberProfile() {
                   <tr className="border-b border-border bg-muted/50">
                     <th className="px-3 py-2.5 text-left font-medium text-muted-foreground">মাস</th>
                     <th className="px-3 py-2.5 text-right font-medium text-muted-foreground">মাসিক জমা</th>
-                    <th className="px-3 py-2.5 text-right font-medium text-muted-foreground">বিবিধ</th>
-                    <th className="px-3 py-2.5 text-right font-medium text-muted-foreground">জরিমানা</th>
-                    <th className="px-3 py-2.5 text-right font-medium text-muted-foreground">এককালীন</th>
+                    <th className="px-3 py-2.5 text-right font-medium text-muted-foreground hidden sm:table-cell">বিবিধ</th>
+                    <th className="px-3 py-2.5 text-right font-medium text-muted-foreground hidden sm:table-cell">জরিমানা</th>
+                    <th className="px-3 py-2.5 text-right font-medium text-muted-foreground hidden md:table-cell">এককালীন</th>
                     <th className="px-3 py-2.5 text-right font-medium text-muted-foreground">মোট</th>
                     <th className="px-3 py-2.5 text-right font-medium text-muted-foreground">বকেয়া</th>
                     <th className="px-3 py-2.5 text-right font-medium text-muted-foreground">ব্যালেন্স</th>
-                    <th className="px-3 py-2.5 text-right font-medium text-muted-foreground">রিসিট</th>
+                    <th className="px-3 py-2.5 text-right font-medium text-muted-foreground hidden sm:table-cell">রিসিট</th>
                     <th className="px-3 py-2.5 text-right font-medium text-muted-foreground"></th>
                   </tr>
                 </thead>
@@ -153,15 +274,15 @@ export default function MemberProfile() {
                     <tr key={r.id} className="border-b border-border last:border-0 hover:bg-muted/30">
                       <td className="px-3 py-2.5 font-medium">{r.month_name} {r.year}</td>
                       <td className="px-3 py-2.5 text-right">{formatCurrency(r.monthly_deposit)}</td>
-                      <td className="px-3 py-2.5 text-right">{formatCurrency(r.misc_expense)}</td>
-                      <td className="px-3 py-2.5 text-right">{formatCurrency(r.late_fine)}</td>
-                      <td className="px-3 py-2.5 text-right">{formatCurrency(r.one_time)}</td>
+                      <td className="px-3 py-2.5 text-right hidden sm:table-cell">{formatCurrency(r.misc_expense)}</td>
+                      <td className="px-3 py-2.5 text-right hidden sm:table-cell">{formatCurrency(r.late_fine)}</td>
+                      <td className="px-3 py-2.5 text-right hidden md:table-cell">{formatCurrency(r.one_time)}</td>
                       <td className="px-3 py-2.5 text-right font-semibold">{formatCurrency(r.total_amount)}</td>
                       <td className="px-3 py-2.5 text-right text-accent">{formatCurrency(r.due)}</td>
                       <td className="px-3 py-2.5 text-right font-semibold">{formatCurrency(r.current_balance)}</td>
-                      <td className="px-3 py-2.5 text-right text-xs text-muted-foreground">{r.receipt_no}</td>
+                      <td className="px-3 py-2.5 text-right text-xs text-muted-foreground hidden sm:table-cell">{r.receipt_no}</td>
                       <td className="px-3 py-2.5 text-right">
-                        <div className="flex items-center justify-end gap-1">
+                        <div className="flex items-center justify-end gap-0.5">
                           <Link to={`/admin/members/${id}/update?record=${r.id}`}>
                             <Button variant="ghost" size="sm"><Edit className="h-3.5 w-3.5" /></Button>
                           </Link>

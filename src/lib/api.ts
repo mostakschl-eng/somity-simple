@@ -110,7 +110,6 @@ export async function createRecord(record: Omit<MonthlyRecord, 'id' | 'total_amo
 }
 
 export async function updateRecord(id: string, updates: Partial<MonthlyRecord>) {
-  // Remove total_amount since it's a generated column
   const { total_amount, ...safeUpdates } = updates;
   const { data, error } = await supabase
     .from('monthly_records')
@@ -138,18 +137,20 @@ export async function getDashboardStats() {
 
   const { data: records, error: rErr } = await supabase
     .from('monthly_records')
-    .select('total_amount, total_deposit, current_balance, due');
+    .select('total_amount, total_deposit, total_expense, current_balance, due');
   if (rErr) throw rErr;
 
   const totalMembers = members?.length ?? 0;
   const activeMembers = members?.filter(m => m.is_active).length ?? 0;
-  const totalDeposit = records?.reduce((s, r) => s + (Number(r.total_amount) || 0), 0) ?? 0;
+  const totalDeposit = records?.reduce((s, r) => s + (Number(r.total_deposit) || 0), 0) ?? 0;
   const totalDue = records?.reduce((s, r) => s + (Number(r.due) || 0), 0) ?? 0;
+  const totalExpense = records?.reduce((s, r) => s + (Number(r.total_expense) || 0), 0) ?? 0;
+  const totalBalance = records?.reduce((s, r) => s + (Number(r.current_balance) || 0), 0) ?? 0;
+  const totalRecords = records?.length ?? 0;
 
-  return { totalMembers, activeMembers, totalDeposit, totalDue };
+  return { totalMembers, activeMembers, totalDeposit, totalDue, totalExpense, totalBalance, totalRecords };
 }
 
-// Create member via edge function (handles auth.users creation)
 export async function createMemberViaEdge(data: {
   email: string;
   password: string;
@@ -162,5 +163,6 @@ export async function createMemberViaEdge(data: {
     body: data,
   });
   if (error) throw error;
+  if (result?.error) throw new Error(result.error);
   return result;
 }
