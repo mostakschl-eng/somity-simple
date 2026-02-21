@@ -92,63 +92,63 @@ export default function MemberProfile() {
   if (!member) return <div className="p-6 text-muted-foreground">সদস্য পাওয়া যায়নি</div>;
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center gap-3">
+    <div className="space-y-4 sm:space-y-6">
+      <div className="flex items-center gap-2 sm:gap-3">
         <Link to="/admin/members">
-          <Button variant="ghost" size="sm"><ArrowLeft className="h-4 w-4" /></Button>
+          <Button variant="ghost" size="sm" className="h-8 w-8 p-0 sm:h-9 sm:w-auto sm:px-3"><ArrowLeft className="h-4 w-4" /></Button>
         </Link>
-        <div className="flex-1">
-          <h1 className="text-2xl font-bold">{member.name}</h1>
-          <p className="text-muted-foreground">সদস্যের বিস্তারিত তথ্য</p>
+        <div className="flex-1 min-w-0">
+          <h1 className="text-lg sm:text-2xl font-bold truncate">{member.name}</h1>
+          <p className="text-xs sm:text-sm text-muted-foreground">সদস্যের বিস্তারিত তথ্য</p>
         </div>
-        <div className="flex items-center gap-2">
-          <Button variant="outline" size="sm" className="gap-1.5" onClick={() => setEditOpen(true)}>
-            <Edit className="h-4 w-4" />
-            সম্পাদনা
+        <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
+          <Button variant="outline" size="sm" className="gap-1 text-xs sm:text-sm h-8 sm:h-9 px-2 sm:px-3" onClick={() => setEditOpen(true)}>
+            <Edit className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+            <span className="hidden sm:inline">সম্পাদনা</span>
           </Button>
-          <Button variant={member.is_active ? 'secondary' : 'default'} size="sm" onClick={() => toggleActive.mutate()}>
-            {member.is_active ? 'নিষ্ক্রিয় করুন' : 'সক্রিয় করুন'}
+          <Button variant={member.is_active ? 'secondary' : 'default'} size="sm" className="text-xs sm:text-sm h-8 sm:h-9 px-2 sm:px-3" onClick={() => toggleActive.mutate()}>
+            {member.is_active ? 'নিষ্ক্রিয়' : 'সক্রিয়'}
           </Button>
         </div>
       </div>
 
       {/* Profile Info */}
       <Card>
-        <CardContent className="p-5">
-          <div className="flex items-start gap-4">
+        <CardContent className="p-3 sm:p-5">
+          <div className="flex items-start gap-3 sm:gap-4">
             <MemberPhotoUpload
               memberId={id!}
               currentPhotoUrl={member.photo_url}
               memberName={member.name}
               size="sm"
             />
-            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4 flex-1">
-              <div className="flex items-center gap-2">
-                <Hash className="h-4 w-4 text-muted-foreground" />
-                <div>
-                  <p className="text-xs text-muted-foreground">সদস্য নং</p>
-                  <p className="font-medium">{member.member_no || '-'}</p>
+            <div className="grid grid-cols-2 gap-2.5 sm:gap-3 sm:grid-cols-2 lg:grid-cols-4 flex-1">
+              <div className="flex items-center gap-1.5 sm:gap-2">
+                <Hash className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-muted-foreground shrink-0" />
+                <div className="min-w-0">
+                  <p className="text-[10px] sm:text-xs text-muted-foreground">সদস্য নং</p>
+                  <p className="text-sm font-medium truncate">{member.member_no || '-'}</p>
                 </div>
               </div>
-              <div className="flex items-center gap-2">
-                <Phone className="h-4 w-4 text-muted-foreground" />
-                <div>
-                  <p className="text-xs text-muted-foreground">মোবাইল</p>
-                  <p className="font-medium">{member.mobile || '-'}</p>
+              <div className="flex items-center gap-1.5 sm:gap-2">
+                <Phone className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-muted-foreground shrink-0" />
+                <div className="min-w-0">
+                  <p className="text-[10px] sm:text-xs text-muted-foreground">মোবাইল</p>
+                  <p className="text-sm font-medium truncate">{member.mobile || '-'}</p>
                 </div>
               </div>
-              <div className="flex items-center gap-2">
-                <Calendar className="h-4 w-4 text-muted-foreground" />
-                <div>
-                  <p className="text-xs text-muted-foreground">অর্থ বছর</p>
-                  <p className="font-medium">{member.financial_year || '-'}</p>
+              <div className="flex items-center gap-1.5 sm:gap-2">
+                <Calendar className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-muted-foreground shrink-0" />
+                <div className="min-w-0">
+                  <p className="text-[10px] sm:text-xs text-muted-foreground">অর্থ বছর</p>
+                  <p className="text-sm font-medium truncate">{member.financial_year || '-'}</p>
                 </div>
               </div>
-              <div className="flex items-center gap-2">
-                <User className="h-4 w-4 text-muted-foreground" />
+              <div className="flex items-center gap-1.5 sm:gap-2">
+                <User className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-muted-foreground shrink-0" />
                 <div>
-                  <p className="text-xs text-muted-foreground">স্ট্যাটাস</p>
-                  <Badge variant={member.is_active ? 'default' : 'secondary'}>
+                  <p className="text-[10px] sm:text-xs text-muted-foreground">স্ট্যাটাস</p>
+                  <Badge variant={member.is_active ? 'default' : 'secondary'} className="text-[10px] sm:text-xs">
                     {member.is_active ? 'সক্রিয়' : 'নিষ্ক্রিয়'}
                   </Badge>
                 </div>
@@ -159,48 +159,48 @@ export default function MemberProfile() {
       </Card>
 
       {/* Financial Summary */}
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
         <Card>
-          <CardContent className="p-4 flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-success/10">
-              <TrendingUp className="h-5 w-5 text-success" />
+          <CardContent className="p-3 sm:p-4 flex items-center gap-2.5 sm:gap-3">
+            <div className="flex h-8 w-8 sm:h-10 sm:w-10 items-center justify-center rounded-xl bg-success/10 shrink-0">
+              <TrendingUp className="h-4 w-4 sm:h-5 sm:w-5 text-success" />
             </div>
-            <div>
-              <p className="text-xs text-muted-foreground">মোট জমা</p>
-              <p className="text-lg font-bold">{formatCurrency(summary.deposit)}</p>
+            <div className="min-w-0">
+              <p className="text-[10px] sm:text-xs text-muted-foreground">মোট জমা</p>
+              <p className="text-sm sm:text-lg font-bold truncate">{formatCurrency(summary.deposit)}</p>
             </div>
           </CardContent>
         </Card>
         <Card>
-          <CardContent className="p-4 flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-info/10">
-              <Wallet className="h-5 w-5 text-info" />
+          <CardContent className="p-3 sm:p-4 flex items-center gap-2.5 sm:gap-3">
+            <div className="flex h-8 w-8 sm:h-10 sm:w-10 items-center justify-center rounded-xl bg-info/10 shrink-0">
+              <Wallet className="h-4 w-4 sm:h-5 sm:w-5 text-info" />
             </div>
-            <div>
-              <p className="text-xs text-muted-foreground">ব্যালেন্স</p>
-              <p className="text-lg font-bold">{formatCurrency(summary.balance)}</p>
-            </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-4 flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-accent/10">
-              <AlertTriangle className="h-5 w-5 text-accent" />
-            </div>
-            <div>
-              <p className="text-xs text-muted-foreground">মোট বকেয়া</p>
-              <p className="text-lg font-bold">{formatCurrency(summary.due)}</p>
+            <div className="min-w-0">
+              <p className="text-[10px] sm:text-xs text-muted-foreground">ব্যালেন্স</p>
+              <p className="text-sm sm:text-lg font-bold truncate">{formatCurrency(summary.balance)}</p>
             </div>
           </CardContent>
         </Card>
         <Card>
-          <CardContent className="p-4 flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10">
-              <Receipt className="h-5 w-5 text-primary" />
+          <CardContent className="p-3 sm:p-4 flex items-center gap-2.5 sm:gap-3">
+            <div className="flex h-8 w-8 sm:h-10 sm:w-10 items-center justify-center rounded-xl bg-accent/10 shrink-0">
+              <AlertTriangle className="h-4 w-4 sm:h-5 sm:w-5 text-accent" />
             </div>
-            <div>
-              <p className="text-xs text-muted-foreground">মোট রেকর্ড</p>
-              <p className="text-lg font-bold">{records?.length ?? 0}</p>
+            <div className="min-w-0">
+              <p className="text-[10px] sm:text-xs text-muted-foreground">মোট বকেয়া</p>
+              <p className="text-sm sm:text-lg font-bold truncate">{formatCurrency(summary.due)}</p>
+            </div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="p-3 sm:p-4 flex items-center gap-2.5 sm:gap-3">
+            <div className="flex h-8 w-8 sm:h-10 sm:w-10 items-center justify-center rounded-xl bg-primary/10 shrink-0">
+              <Receipt className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
+            </div>
+            <div className="min-w-0">
+              <p className="text-[10px] sm:text-xs text-muted-foreground">মোট রেকর্ড</p>
+              <p className="text-sm sm:text-lg font-bold">{records?.length ?? 0}</p>
             </div>
           </CardContent>
         </Card>

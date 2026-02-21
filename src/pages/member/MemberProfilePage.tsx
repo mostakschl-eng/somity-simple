@@ -2,16 +2,16 @@ import { useQuery } from '@tanstack/react-query';
 import { useAuth } from '@/hooks/useAuth';
 import { getMemberRecords, getMember } from '@/lib/api';
 import { formatCurrency } from '@/lib/constants';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { generateReceiptPDF } from '@/lib/generateReceipt';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { 
-  Download, User, Phone, Hash, Calendar, Wallet, 
+  User, Phone, Hash, Calendar, Wallet, 
   TrendingUp, AlertTriangle, Receipt, Activity, FileDown
 } from 'lucide-react';
 import { useState, useMemo } from 'react';
-import { generateReceiptPDF } from '@/lib/generateReceipt';
 import {
   ChartContainer,
   ChartTooltip,
@@ -43,7 +43,6 @@ export default function MemberProfilePage() {
 
   const years = [...new Set(records?.map(r => r.year))].sort((a, b) => b - a);
 
-  // Calculate totals
   const totals = useMemo(() => {
     if (!records?.length) return { deposit: 0, expense: 0, due: 0, balance: 0, count: 0 };
     return {
@@ -55,7 +54,6 @@ export default function MemberProfilePage() {
     };
   }, [records]);
 
-  // Chart data
   const chartData = useMemo(() => {
     if (!records) return [];
     return records.map(r => ({
@@ -71,60 +69,60 @@ export default function MemberProfilePage() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       <div>
-        <h1 className="text-2xl font-bold flex items-center gap-2">
-          <User className="h-6 w-6 text-primary" />
+        <h1 className="text-xl sm:text-2xl font-bold flex items-center gap-2">
+          <User className="h-5 w-5 sm:h-6 sm:w-6 text-primary" />
           আমার প্রোফাইল
         </h1>
-        <p className="text-muted-foreground">আপনার সমিতির তথ্য ও আর্থিক সারসংক্ষেপ</p>
+        <p className="text-xs sm:text-sm text-muted-foreground">আপনার সমিতির তথ্য ও আর্থিক সারসংক্ষেপ</p>
       </div>
 
       {/* Profile Info */}
       {profile && (
         <Card>
-          <CardContent className="p-5">
-            <div className="flex flex-col sm:flex-row items-start gap-4">
+          <CardContent className="p-3 sm:p-5">
+            <div className="flex flex-col sm:flex-row items-start gap-3 sm:gap-4">
               {profile.photo_url ? (
-                <div className="h-16 w-16 rounded-2xl overflow-hidden ring-2 ring-primary/20 shrink-0">
+                <div className="h-14 w-14 sm:h-16 sm:w-16 rounded-2xl overflow-hidden ring-2 ring-primary/20 shrink-0">
                   <img src={profile.photo_url} alt={profile.name} className="h-full w-full object-cover" />
                 </div>
               ) : (
-                <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10 text-2xl font-bold text-primary shrink-0">
+                <div className="flex h-14 w-14 sm:h-16 sm:w-16 items-center justify-center rounded-2xl bg-primary/10 text-xl sm:text-2xl font-bold text-primary shrink-0">
                   {profile.name?.charAt(0)}
                 </div>
               )}
-              <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4 flex-1">
+              <div className="grid grid-cols-2 gap-2.5 sm:gap-3 sm:grid-cols-2 lg:grid-cols-4 flex-1 w-full">
                 <div className="flex items-center gap-2">
-                  <Hash className="h-4 w-4 text-muted-foreground" />
-                  <div>
-                    <p className="text-xs text-muted-foreground">সদস্য নং</p>
-                    <p className="font-medium">{profile.member_no || '-'}</p>
+                  <Hash className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-muted-foreground shrink-0" />
+                  <div className="min-w-0">
+                    <p className="text-[10px] sm:text-xs text-muted-foreground">সদস্য নং</p>
+                    <p className="text-sm font-medium truncate">{profile.member_no || '-'}</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
-                  <User className="h-4 w-4 text-muted-foreground" />
-                  <div>
-                    <p className="text-xs text-muted-foreground">নাম</p>
-                    <p className="font-medium">{profile.name}</p>
+                  <User className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-muted-foreground shrink-0" />
+                  <div className="min-w-0">
+                    <p className="text-[10px] sm:text-xs text-muted-foreground">নাম</p>
+                    <p className="text-sm font-medium truncate">{profile.name}</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Phone className="h-4 w-4 text-muted-foreground" />
-                  <div>
-                    <p className="text-xs text-muted-foreground">মোবাইল</p>
-                    <p className="font-medium">{profile.mobile || '-'}</p>
+                  <Phone className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-muted-foreground shrink-0" />
+                  <div className="min-w-0">
+                    <p className="text-[10px] sm:text-xs text-muted-foreground">মোবাইল</p>
+                    <p className="text-sm font-medium truncate">{profile.mobile || '-'}</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Calendar className="h-4 w-4 text-muted-foreground" />
-                  <div>
-                    <p className="text-xs text-muted-foreground">অর্থ বছর</p>
-                    <p className="font-medium">{profile.financial_year || '-'}</p>
+                  <Calendar className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-muted-foreground shrink-0" />
+                  <div className="min-w-0">
+                    <p className="text-[10px] sm:text-xs text-muted-foreground">অর্থ বছর</p>
+                    <p className="text-sm font-medium truncate">{profile.financial_year || '-'}</p>
                   </div>
                 </div>
               </div>
-              <Badge variant={profile.is_active ? 'default' : 'secondary'} className="shrink-0">
+              <Badge variant={profile.is_active ? 'default' : 'secondary'} className="shrink-0 text-xs">
                 {profile.is_active ? 'সক্রিয়' : 'নিষ্ক্রিয়'}
               </Badge>
             </div>
@@ -133,48 +131,48 @@ export default function MemberProfilePage() {
       )}
 
       {/* Stats Cards */}
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
         <Card>
-          <CardContent className="p-4 flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-success/10">
-              <TrendingUp className="h-5 w-5 text-success" />
+          <CardContent className="p-3 sm:p-4 flex items-center gap-2.5 sm:gap-3">
+            <div className="flex h-8 w-8 sm:h-10 sm:w-10 items-center justify-center rounded-xl bg-success/10 shrink-0">
+              <TrendingUp className="h-4 w-4 sm:h-5 sm:w-5 text-success" />
             </div>
-            <div>
-              <p className="text-xs text-muted-foreground">মোট জমা</p>
-              <p className="text-lg font-bold">{formatCurrency(totals.deposit)}</p>
+            <div className="min-w-0">
+              <p className="text-[10px] sm:text-xs text-muted-foreground">মোট জমা</p>
+              <p className="text-sm sm:text-lg font-bold truncate">{formatCurrency(totals.deposit)}</p>
             </div>
           </CardContent>
         </Card>
         <Card>
-          <CardContent className="p-4 flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-info/10">
-              <Wallet className="h-5 w-5 text-info" />
+          <CardContent className="p-3 sm:p-4 flex items-center gap-2.5 sm:gap-3">
+            <div className="flex h-8 w-8 sm:h-10 sm:w-10 items-center justify-center rounded-xl bg-info/10 shrink-0">
+              <Wallet className="h-4 w-4 sm:h-5 sm:w-5 text-info" />
             </div>
-            <div>
-              <p className="text-xs text-muted-foreground">বর্তমান ব্যালেন্স</p>
-              <p className="text-lg font-bold">{formatCurrency(totals.balance)}</p>
-            </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-4 flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-accent/10">
-              <AlertTriangle className="h-5 w-5 text-accent" />
-            </div>
-            <div>
-              <p className="text-xs text-muted-foreground">মোট বকেয়া</p>
-              <p className="text-lg font-bold">{formatCurrency(totals.due)}</p>
+            <div className="min-w-0">
+              <p className="text-[10px] sm:text-xs text-muted-foreground">ব্যালেন্স</p>
+              <p className="text-sm sm:text-lg font-bold truncate">{formatCurrency(totals.balance)}</p>
             </div>
           </CardContent>
         </Card>
         <Card>
-          <CardContent className="p-4 flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10">
-              <Receipt className="h-5 w-5 text-primary" />
+          <CardContent className="p-3 sm:p-4 flex items-center gap-2.5 sm:gap-3">
+            <div className="flex h-8 w-8 sm:h-10 sm:w-10 items-center justify-center rounded-xl bg-accent/10 shrink-0">
+              <AlertTriangle className="h-4 w-4 sm:h-5 sm:w-5 text-accent" />
             </div>
-            <div>
-              <p className="text-xs text-muted-foreground">মোট রেকর্ড</p>
-              <p className="text-lg font-bold">{totals.count}</p>
+            <div className="min-w-0">
+              <p className="text-[10px] sm:text-xs text-muted-foreground">মোট বকেয়া</p>
+              <p className="text-sm sm:text-lg font-bold truncate">{formatCurrency(totals.due)}</p>
+            </div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="p-3 sm:p-4 flex items-center gap-2.5 sm:gap-3">
+            <div className="flex h-8 w-8 sm:h-10 sm:w-10 items-center justify-center rounded-xl bg-primary/10 shrink-0">
+              <Receipt className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
+            </div>
+            <div className="min-w-0">
+              <p className="text-[10px] sm:text-xs text-muted-foreground">মোট রেকর্ড</p>
+              <p className="text-sm sm:text-lg font-bold">{totals.count}</p>
             </div>
           </CardContent>
         </Card>
@@ -183,18 +181,18 @@ export default function MemberProfilePage() {
       {/* Chart */}
       {chartData.length > 0 && (
         <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-base flex items-center gap-2">
-              <Activity className="h-5 w-5 text-muted-foreground" />
+          <CardHeader className="pb-2 px-3 sm:px-6">
+            <CardTitle className="text-sm sm:text-base flex items-center gap-2">
+              <Activity className="h-4 w-4 sm:h-5 sm:w-5 text-muted-foreground" />
               মাসিক জমা ও বকেয়া
             </CardTitle>
           </CardHeader>
-          <CardContent>
-            <ChartContainer config={chartConfig} className="h-[200px] w-full">
+          <CardContent className="px-1 sm:px-6">
+            <ChartContainer config={chartConfig} className="h-[160px] sm:h-[200px] w-full">
               <BarChart data={chartData}>
                 <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="name" tick={{ fontSize: 11 }} />
-                <YAxis tick={{ fontSize: 11 }} />
+                <XAxis dataKey="name" tick={{ fontSize: 10 }} />
+                <YAxis tick={{ fontSize: 10 }} />
                 <ChartTooltip content={<ChartTooltipContent />} />
                 <Bar dataKey="deposit" fill="var(--color-deposit)" radius={[3, 3, 0, 0]} />
                 <Bar dataKey="due" fill="var(--color-due)" radius={[3, 3, 0, 0]} />
@@ -204,15 +202,15 @@ export default function MemberProfilePage() {
         </Card>
       )}
 
-      {/* Records Table */}
+      {/* Records */}
       <Card>
-        <CardHeader className="flex flex-row items-center justify-between">
-          <CardTitle className="text-base flex items-center gap-2">
-            <Receipt className="h-5 w-5 text-muted-foreground" />
+        <CardHeader className="flex flex-row items-center justify-between px-3 sm:px-6 gap-2">
+          <CardTitle className="text-sm sm:text-base flex items-center gap-2">
+            <Receipt className="h-4 w-4 sm:h-5 sm:w-5 text-muted-foreground" />
             মাসিক রেকর্ড
           </CardTitle>
           <Select value={yearFilter} onValueChange={setYearFilter}>
-            <SelectTrigger className="w-32">
+            <SelectTrigger className="w-24 sm:w-32 h-8 sm:h-9 text-xs sm:text-sm">
               <SelectValue placeholder="বছর" />
             </SelectTrigger>
             <SelectContent>
@@ -225,47 +223,70 @@ export default function MemberProfilePage() {
         </CardHeader>
         <CardContent className="p-0">
           {isLoading ? (
-            <div className="p-6 text-center text-muted-foreground">লোড হচ্ছে...</div>
+            <div className="p-6 text-center text-muted-foreground text-sm">লোড হচ্ছে...</div>
           ) : !records?.length ? (
-            <div className="p-8 text-center">
-              <Receipt className="h-12 w-12 mx-auto text-muted-foreground/30 mb-3" />
-              <p className="text-muted-foreground">কোনো রেকর্ড নেই</p>
+            <div className="p-6 text-center">
+              <Receipt className="h-10 w-10 mx-auto text-muted-foreground/30 mb-2" />
+              <p className="text-sm text-muted-foreground">কোনো রেকর্ড নেই</p>
             </div>
           ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm">
-                <thead>
-                  <tr className="border-b border-border bg-muted/50">
-                    <th className="px-3 py-2.5 text-left font-medium text-muted-foreground">মাস</th>
-                    <th className="px-3 py-2.5 text-right font-medium text-muted-foreground">মাসিক জমা</th>
-                    <th className="px-3 py-2.5 text-right font-medium text-muted-foreground hidden sm:table-cell">বিবিধ</th>
-                    <th className="px-3 py-2.5 text-right font-medium text-muted-foreground hidden sm:table-cell">জরিমানা</th>
-                    <th className="px-3 py-2.5 text-right font-medium text-muted-foreground">মোট</th>
-                    <th className="px-3 py-2.5 text-right font-medium text-muted-foreground">বকেয়া</th>
-                    <th className="px-3 py-2.5 text-right font-medium text-muted-foreground">ব্যালেন্স</th>
-                    <th className="px-3 py-2.5 text-right font-medium text-muted-foreground">রিসিট</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {records.map((r) => (
-                    <tr key={r.id} className="border-b border-border last:border-0 hover:bg-muted/30">
-                      <td className="px-3 py-2.5 font-medium">{r.month_name} {r.year}</td>
-                      <td className="px-3 py-2.5 text-right">{formatCurrency(r.monthly_deposit)}</td>
-                      <td className="px-3 py-2.5 text-right hidden sm:table-cell">{formatCurrency(r.misc_expense)}</td>
-                      <td className="px-3 py-2.5 text-right hidden sm:table-cell">{formatCurrency(r.late_fine)}</td>
-                      <td className="px-3 py-2.5 text-right font-semibold">{formatCurrency(r.total_amount)}</td>
-                      <td className="px-3 py-2.5 text-right text-accent">{formatCurrency(r.due)}</td>
-                      <td className="px-3 py-2.5 text-right font-semibold">{formatCurrency(r.current_balance)}</td>
-                      <td className="px-3 py-2.5 text-right">
-                        <Button variant="ghost" size="sm" onClick={() => handleDownloadReceipt(r)} title="PDF ডাউনলোড">
-                          <FileDown className="h-3.5 w-3.5" />
-                        </Button>
-                      </td>
+            <>
+              {/* Mobile card view */}
+              <div className="space-y-2 p-3 sm:hidden">
+                {records.map((r) => (
+                  <div key={r.id} className="rounded-lg border border-border p-3 space-y-2">
+                    <div className="flex items-center justify-between">
+                      <span className="font-medium text-sm">{r.month_name} {r.year}</span>
+                      <Button variant="ghost" size="sm" className="h-7 px-2" onClick={() => handleDownloadReceipt(r)}>
+                        <FileDown className="h-3.5 w-3.5" />
+                      </Button>
+                    </div>
+                    <div className="grid grid-cols-2 gap-1.5 text-xs">
+                      <div><span className="text-muted-foreground">জমা:</span> <span className="font-medium">{formatCurrency(r.monthly_deposit)}</span></div>
+                      <div><span className="text-muted-foreground">মোট:</span> <span className="font-semibold">{formatCurrency(r.total_amount)}</span></div>
+                      <div><span className="text-muted-foreground">বকেয়া:</span> <span className="font-medium text-accent">{formatCurrency(r.due)}</span></div>
+                      <div><span className="text-muted-foreground">ব্যালেন্স:</span> <span className="font-semibold">{formatCurrency(r.current_balance)}</span></div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Desktop table */}
+              <div className="overflow-x-auto hidden sm:block">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="border-b border-border bg-muted/50">
+                      <th className="px-3 py-2.5 text-left font-medium text-muted-foreground">মাস</th>
+                      <th className="px-3 py-2.5 text-right font-medium text-muted-foreground">মাসিক জমা</th>
+                      <th className="px-3 py-2.5 text-right font-medium text-muted-foreground hidden md:table-cell">বিবিধ</th>
+                      <th className="px-3 py-2.5 text-right font-medium text-muted-foreground hidden md:table-cell">জরিমানা</th>
+                      <th className="px-3 py-2.5 text-right font-medium text-muted-foreground">মোট</th>
+                      <th className="px-3 py-2.5 text-right font-medium text-muted-foreground">বকেয়া</th>
+                      <th className="px-3 py-2.5 text-right font-medium text-muted-foreground">ব্যালেন্স</th>
+                      <th className="px-3 py-2.5 text-right font-medium text-muted-foreground">রিসিট</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+                  </thead>
+                  <tbody>
+                    {records.map((r) => (
+                      <tr key={r.id} className="border-b border-border last:border-0 hover:bg-muted/30">
+                        <td className="px-3 py-2.5 font-medium">{r.month_name} {r.year}</td>
+                        <td className="px-3 py-2.5 text-right">{formatCurrency(r.monthly_deposit)}</td>
+                        <td className="px-3 py-2.5 text-right hidden md:table-cell">{formatCurrency(r.misc_expense)}</td>
+                        <td className="px-3 py-2.5 text-right hidden md:table-cell">{formatCurrency(r.late_fine)}</td>
+                        <td className="px-3 py-2.5 text-right font-semibold">{formatCurrency(r.total_amount)}</td>
+                        <td className="px-3 py-2.5 text-right text-accent">{formatCurrency(r.due)}</td>
+                        <td className="px-3 py-2.5 text-right font-semibold">{formatCurrency(r.current_balance)}</td>
+                        <td className="px-3 py-2.5 text-right">
+                          <Button variant="ghost" size="sm" onClick={() => handleDownloadReceipt(r)} title="PDF ডাউনলোড">
+                            <FileDown className="h-3.5 w-3.5" />
+                          </Button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </>
           )}
         </CardContent>
       </Card>

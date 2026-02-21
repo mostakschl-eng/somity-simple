@@ -6,7 +6,7 @@ import { BENGALI_MONTHS } from '@/lib/constants';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
 import { ArrowLeft, Save } from 'lucide-react';
@@ -70,16 +70,9 @@ export default function UpdateRecord() {
   const saveMutation = useMutation({
     mutationFn: async () => {
       if (recordId && existingRecord) {
-        return updateRecord(recordId, {
-          ...form,
-          month_name: monthName,
-        });
+        return updateRecord(recordId, { ...form, month_name: monthName });
       } else {
-        return createRecord({
-          member_id: id!,
-          ...form,
-          month_name: monthName,
-        });
+        return createRecord({ member_id: id!, ...form, month_name: monthName });
       }
     },
     onSuccess: () => {
@@ -99,30 +92,32 @@ export default function UpdateRecord() {
   const totalAmount = form.monthly_deposit + form.misc_expense + form.late_fine + form.one_time;
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center gap-3">
+    <div className="space-y-4 sm:space-y-6">
+      <div className="flex items-center gap-2 sm:gap-3">
         <Link to={`/admin/members/${id}`}>
-          <Button variant="ghost" size="sm"><ArrowLeft className="h-4 w-4" /></Button>
+          <Button variant="ghost" size="sm" className="h-8 w-8 p-0 sm:h-9 sm:w-auto sm:px-3">
+            <ArrowLeft className="h-4 w-4" />
+          </Button>
         </Link>
-        <div>
-          <h1 className="text-2xl font-bold">{recordId ? 'রেকর্ড আপডেট' : 'নতুন মাসের রেকর্ড'}</h1>
-          <p className="text-muted-foreground">{member?.name} — সদস্য নং: {member?.member_no}</p>
+        <div className="min-w-0">
+          <h1 className="text-lg sm:text-2xl font-bold truncate">{recordId ? 'রেকর্ড আপডেট' : 'নতুন মাসের রেকর্ড'}</h1>
+          <p className="text-xs sm:text-sm text-muted-foreground truncate">{member?.name} — #{member?.member_no}</p>
         </div>
       </div>
 
       <Card className="max-w-2xl">
-        <CardContent className="pt-6">
-          <form onSubmit={(e) => { e.preventDefault(); saveMutation.mutate(); }} className="space-y-5">
+        <CardContent className="p-3 sm:p-6 pt-3 sm:pt-6">
+          <form onSubmit={(e) => { e.preventDefault(); saveMutation.mutate(); }} className="space-y-4 sm:space-y-5">
             {/* Year & Month */}
-            <div className="grid gap-4 sm:grid-cols-3">
-              <div className="space-y-2">
-                <Label>বছর</Label>
-                <Input type="number" value={form.year} onChange={e => updateField('year', parseInt(e.target.value))} />
+            <div className="grid grid-cols-3 gap-2 sm:gap-4">
+              <div className="space-y-1 sm:space-y-2">
+                <Label className="text-xs sm:text-sm">বছর</Label>
+                <Input type="number" value={form.year} onChange={e => updateField('year', parseInt(e.target.value))} className="h-9 text-sm" />
               </div>
-              <div className="space-y-2">
-                <Label>মাস</Label>
+              <div className="space-y-1 sm:space-y-2">
+                <Label className="text-xs sm:text-sm">মাস</Label>
                 <Select value={form.month_number.toString()} onValueChange={v => updateField('month_number', parseInt(v))}>
-                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectTrigger className="h-9 text-xs sm:text-sm"><SelectValue /></SelectTrigger>
                   <SelectContent>
                     {BENGALI_MONTHS.map(m => (
                       <SelectItem key={m.number} value={m.number.toString()}>{m.name}</SelectItem>
@@ -130,59 +125,59 @@ export default function UpdateRecord() {
                   </SelectContent>
                 </Select>
               </div>
-              <div className="space-y-2">
-                <Label>তারিখ</Label>
-                <Input type="date" value={form.date} onChange={e => updateField('date', e.target.value)} />
+              <div className="space-y-1 sm:space-y-2">
+                <Label className="text-xs sm:text-sm">তারিখ</Label>
+                <Input type="date" value={form.date} onChange={e => updateField('date', e.target.value)} className="h-9 text-sm" />
               </div>
             </div>
 
             {/* Amounts */}
-            <div className="grid gap-4 sm:grid-cols-2">
-              <div className="space-y-2">
-                <Label>মাসিক জমা (৳)</Label>
-                <Input type="number" step="0.01" value={form.monthly_deposit} onChange={e => updateField('monthly_deposit', parseFloat(e.target.value) || 0)} />
+            <div className="grid grid-cols-2 gap-2 sm:gap-4">
+              <div className="space-y-1 sm:space-y-2">
+                <Label className="text-xs sm:text-sm">মাসিক জমা (৳)</Label>
+                <Input type="number" step="0.01" value={form.monthly_deposit} onChange={e => updateField('monthly_deposit', parseFloat(e.target.value) || 0)} className="h-9 text-sm" />
               </div>
-              <div className="space-y-2">
-                <Label>বিবিধ খরচ জমা (৳)</Label>
-                <Input type="number" step="0.01" value={form.misc_expense} onChange={e => updateField('misc_expense', parseFloat(e.target.value) || 0)} />
+              <div className="space-y-1 sm:space-y-2">
+                <Label className="text-xs sm:text-sm">বিবিধ খরচ (৳)</Label>
+                <Input type="number" step="0.01" value={form.misc_expense} onChange={e => updateField('misc_expense', parseFloat(e.target.value) || 0)} className="h-9 text-sm" />
               </div>
-              <div className="space-y-2">
-                <Label>বিলম্ব জরিমানা (৳)</Label>
-                <Input type="number" step="0.01" value={form.late_fine} onChange={e => updateField('late_fine', parseFloat(e.target.value) || 0)} />
+              <div className="space-y-1 sm:space-y-2">
+                <Label className="text-xs sm:text-sm">জরিমানা (৳)</Label>
+                <Input type="number" step="0.01" value={form.late_fine} onChange={e => updateField('late_fine', parseFloat(e.target.value) || 0)} className="h-9 text-sm" />
               </div>
-              <div className="space-y-2">
-                <Label>এককালীন (৳)</Label>
-                <Input type="number" step="0.01" value={form.one_time} onChange={e => updateField('one_time', parseFloat(e.target.value) || 0)} />
+              <div className="space-y-1 sm:space-y-2">
+                <Label className="text-xs sm:text-sm">এককালীন (৳)</Label>
+                <Input type="number" step="0.01" value={form.one_time} onChange={e => updateField('one_time', parseFloat(e.target.value) || 0)} className="h-9 text-sm" />
               </div>
             </div>
 
-            {/* Auto-calculated total */}
-            <div className="rounded-lg bg-muted p-4">
-              <p className="text-sm text-muted-foreground">মোট টাকা (স্বয়ংক্রিয়)</p>
-              <p className="text-2xl font-bold text-primary">৳{totalAmount.toLocaleString('bn-BD', { minimumFractionDigits: 2 })}</p>
+            {/* Total */}
+            <div className="rounded-lg bg-muted p-3 sm:p-4">
+              <p className="text-xs sm:text-sm text-muted-foreground">মোট টাকা (স্বয়ংক্রিয়)</p>
+              <p className="text-xl sm:text-2xl font-bold text-primary">৳{totalAmount.toLocaleString('bn-BD', { minimumFractionDigits: 2 })}</p>
             </div>
 
             {/* Running totals */}
-            <div className="grid gap-4 sm:grid-cols-2">
-              <div className="space-y-2">
-                <Label>বকেয়া (৳)</Label>
-                <Input type="number" step="0.01" value={form.due} onChange={e => updateField('due', parseFloat(e.target.value) || 0)} />
+            <div className="grid grid-cols-2 gap-2 sm:gap-4">
+              <div className="space-y-1 sm:space-y-2">
+                <Label className="text-xs sm:text-sm">বকেয়া (৳)</Label>
+                <Input type="number" step="0.01" value={form.due} onChange={e => updateField('due', parseFloat(e.target.value) || 0)} className="h-9 text-sm" />
               </div>
-              <div className="space-y-2">
-                <Label>মোট জমা (৳)</Label>
-                <Input type="number" step="0.01" value={form.total_deposit} onChange={e => updateField('total_deposit', parseFloat(e.target.value) || 0)} />
+              <div className="space-y-1 sm:space-y-2">
+                <Label className="text-xs sm:text-sm">মোট জমা (৳)</Label>
+                <Input type="number" step="0.01" value={form.total_deposit} onChange={e => updateField('total_deposit', parseFloat(e.target.value) || 0)} className="h-9 text-sm" />
               </div>
-              <div className="space-y-2">
-                <Label>মোট ব্যয় (৳)</Label>
-                <Input type="number" step="0.01" value={form.total_expense} onChange={e => updateField('total_expense', parseFloat(e.target.value) || 0)} />
+              <div className="space-y-1 sm:space-y-2">
+                <Label className="text-xs sm:text-sm">মোট ব্যয় (৳)</Label>
+                <Input type="number" step="0.01" value={form.total_expense} onChange={e => updateField('total_expense', parseFloat(e.target.value) || 0)} className="h-9 text-sm" />
               </div>
-              <div className="space-y-2">
-                <Label>বর্তমান ব্যালেন্স (৳)</Label>
-                <Input type="number" step="0.01" value={form.current_balance} onChange={e => updateField('current_balance', parseFloat(e.target.value) || 0)} />
+              <div className="space-y-1 sm:space-y-2">
+                <Label className="text-xs sm:text-sm">ব্যালেন্স (৳)</Label>
+                <Input type="number" step="0.01" value={form.current_balance} onChange={e => updateField('current_balance', parseFloat(e.target.value) || 0)} className="h-9 text-sm" />
               </div>
             </div>
 
-            <Button type="submit" className="w-full" disabled={saveMutation.isPending}>
+            <Button type="submit" className="w-full h-9 sm:h-10 text-sm" disabled={saveMutation.isPending}>
               <Save className="mr-2 h-4 w-4" />
               {saveMutation.isPending ? 'সংরক্ষণ হচ্ছে...' : recordId ? 'আপডেট করুন' : 'রেকর্ড যোগ করুন'}
             </Button>
