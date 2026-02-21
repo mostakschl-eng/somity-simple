@@ -85,9 +85,15 @@ export default function MemberProfilePage() {
         <Card>
           <CardContent className="p-5">
             <div className="flex flex-col sm:flex-row items-start gap-4">
-              <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10 text-2xl font-bold text-primary shrink-0">
-                {profile.name?.charAt(0)}
-              </div>
+              {profile.photo_url ? (
+                <div className="h-16 w-16 rounded-2xl overflow-hidden ring-2 ring-primary/20 shrink-0">
+                  <img src={profile.photo_url} alt={profile.name} className="h-full w-full object-cover" />
+                </div>
+              ) : (
+                <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10 text-2xl font-bold text-primary shrink-0">
+                  {profile.name?.charAt(0)}
+                </div>
+              )}
               <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4 flex-1">
                 <div className="flex items-center gap-2">
                   <Hash className="h-4 w-4 text-muted-foreground" />
