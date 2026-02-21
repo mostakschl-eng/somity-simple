@@ -3,10 +3,11 @@ import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { 
   LayoutDashboard, Users, UserPlus, LogOut, User, 
-  ChevronRight, Menu, X 
+  ChevronRight, Menu, X, Shield, Settings
 } from 'lucide-react';
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 
 const adminNavItems = [
   { path: '/admin/dashboard', label: 'ড্যাশবোর্ড', icon: LayoutDashboard },
@@ -45,7 +46,7 @@ export function AppLayout({ children }: { children: ReactNode }) {
         <div className="flex h-full flex-col">
           {/* Logo */}
           <div className="flex items-center gap-3 border-b border-sidebar-border px-5 py-5">
-            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-sidebar-primary">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-sidebar-primary">
               <span className="text-lg font-bold text-sidebar-primary-foreground">স</span>
             </div>
             <div>
@@ -57,19 +58,30 @@ export function AppLayout({ children }: { children: ReactNode }) {
             </button>
           </div>
 
+          {/* Role Badge */}
+          <div className="px-5 py-3 border-b border-sidebar-border">
+            <div className="flex items-center gap-2">
+              <Shield className="h-4 w-4 text-sidebar-primary" />
+              <span className="text-xs text-sidebar-foreground/60">
+                {role === 'super_admin' ? 'সুপার অ্যাডমিন' : 'সদস্য'}
+              </span>
+            </div>
+          </div>
+
           {/* Nav Items */}
           <nav className="flex-1 space-y-1 px-3 py-4">
+            <p className="px-3 mb-2 text-[10px] uppercase tracking-wider text-sidebar-foreground/40 font-semibold">মেনু</p>
             {navItems.map((item) => {
               const isActive = location.pathname === item.path || 
-                (item.path !== '/admin/dashboard' && location.pathname.startsWith(item.path));
+                (item.path !== '/admin/dashboard' && item.path !== '/member/profile' && location.pathname.startsWith(item.path));
               return (
                 <Link
                   key={item.path}
                   to={item.path}
                   onClick={() => setSidebarOpen(false)}
-                  className={`flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors ${
+                  className={`flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all ${
                     isActive 
-                      ? 'bg-sidebar-primary text-sidebar-primary-foreground' 
+                      ? 'bg-sidebar-primary text-sidebar-primary-foreground shadow-sm' 
                       : 'text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground'
                   }`}
                 >
@@ -83,12 +95,17 @@ export function AppLayout({ children }: { children: ReactNode }) {
 
           {/* User Info */}
           <div className="border-t border-sidebar-border p-4">
-            <div className="mb-3 text-xs text-sidebar-foreground/50">
-              {user?.email}
+            <div className="flex items-center gap-3 mb-3">
+              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-sidebar-primary/20 text-xs font-bold text-sidebar-primary">
+                {user?.email?.charAt(0).toUpperCase()}
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-xs font-medium text-sidebar-foreground truncate">{user?.email}</p>
+              </div>
             </div>
             <button
               onClick={signOut}
-              className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-colors"
+              className="flex w-full items-center gap-2 rounded-xl px-3 py-2 text-sm text-sidebar-foreground/70 hover:bg-destructive/10 hover:text-destructive transition-colors"
             >
               <LogOut className="h-4 w-4" />
               লগআউট
@@ -105,6 +122,10 @@ export function AppLayout({ children }: { children: ReactNode }) {
             <Menu className="h-5 w-5 text-foreground" />
           </button>
           <div className="flex-1" />
+          <Badge variant="outline" className="text-xs gap-1">
+            <div className="h-1.5 w-1.5 rounded-full bg-success animate-pulse" />
+            অনলাইন
+          </Badge>
         </header>
 
         {/* Content */}
