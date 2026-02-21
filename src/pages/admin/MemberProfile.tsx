@@ -75,7 +75,7 @@ export default function MemberProfile() {
     },
   });
 
-  const years = [...new Set(records?.map(r => r.year))].sort((a, b) => b - a);
+  const years = Array.from({ length: 11 }, (_, i) => 2020 + i);
 
   // Financial summary
   const summary = useMemo(() => {
