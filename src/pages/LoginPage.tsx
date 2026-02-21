@@ -149,7 +149,7 @@ export default function LoginPage() {
         </div>
 
         {/* Mobile Form Card */}
-        <div className="relative z-10 flex-1 bg-background px-4 pb-6 -mt-6">
+        <div className="relative z-10 flex-1 bg-background px-4 pt-4 pb-6">
           <Card className="shadow-xl border-border overflow-hidden animate-fade-in">
             <div className="h-1 bg-gradient-to-r from-primary via-primary/70 to-primary/40" />
             <CardContent className="p-5 space-y-5">
